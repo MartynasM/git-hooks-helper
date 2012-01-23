@@ -7,6 +7,7 @@ File clasification
 
 Most commands use file classes internally or accept type class as a param.
 File type classes and associated file extensions:
+
 1. :rb  - .rb .rake .task .prawn
 2. :js  - .js
 3. :erb - .erb

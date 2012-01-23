@@ -1,5 +1,6 @@
 require "git-hooks-helper/result"
 require "git-hooks-helper/git"
+require "git-hooks-helper/ruby"
 require "git-hooks-helper/extensions/string"
 require "open3"
 
@@ -16,7 +17,7 @@ module GitHooksHelper
 
     # Set this to true if you want warnings to stop your commit
     def initialize(&block)
-      @compiler_ruby = `which ruby`.strip
+      @ruby = GitHooksHelper::Ruby.new
 
       @result = GitHooksHelper::Result.new(false)
       @changed_ruby_files = GitHooksHelper::Git.in_index
@@ -85,7 +86,7 @@ module GitHooksHelper
 
     def check_ruby_syntax
       each_changed_file([:rb]) do |file|
-        Open3.popen3("#{@compiler_ruby} -wc #{file}") do |stdin, stdout, stderr|
+        Open3.popen3(GitHooksHelper::Ruby.check_syntax(file)) do |stdin, stdout, stderr|
           stderr.read.split("\n").each do |line|
             line =~ RB_WARNING_REGEXP ? @result.warnings << line : @result.errors << line
           end
@@ -103,8 +104,7 @@ module GitHooksHelper
 
     def check_best_practices
       each_changed_file([:rb, :erb]) do |file|
-        puts "bundle exec rails_best_practices --spec --test #{file}"
-        Open3.popen3("bundle exec rails_best_practices --spec --test #{file}") do |stdin, stdout, stderr|
+        Open3.popen3("rails_best_practices --spec --test #{file}") do |stdin, stdout, stderr|
           @result.warn(stdout.read.split("\n").map do |line|
             if line =~ /#{file}/
               line.gsub(COLOR_REGEXP, '').strip
