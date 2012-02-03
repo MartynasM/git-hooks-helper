@@ -18,9 +18,12 @@ module GitHooksHelper
     # Set this to true if you want warnings to stop your commit
     def initialize(&block)
       @ruby = GitHooksHelper::Ruby.new
+      @debug = false
 
       @result = GitHooksHelper::Result.new(false)
-      @changed_ruby_files = GitHooksHelper::Git.in_index
+      @changed_files = GitHooksHelper::Git.in_index
+      debug("changed files")
+      debug @changed_files
 
       instance_eval(&block) if block
 
@@ -55,6 +58,14 @@ module GitHooksHelper
       end
     end
 
+    def start_debug
+      @debug = true
+    end
+
+    def stop_debug
+      @debug = false
+    end
+
     def stop_on_warnings
       @result.stop_on_warnings = true
     end
@@ -68,19 +79,27 @@ module GitHooksHelper
     end
 
     def list_files(filetypes = [:all])
+      puts "--- Listing files of type: #{filetypes}"
       each_changed_file(filetypes) do |file|
         puts file
       end
+      puts "--- End of list"
     end
 
     def each_changed_file(filetypes = [:all])
+      debug("changed files")
+      debug(filetypes)
       if @result.continue?
-        @changed_ruby_files.each do |file|
+        debug("Can continue")
+        @changed_files.each do |file|
+          debug("File: #{file}")
           unless filetypes.include?(:all)
             next unless (filetypes.include?(:rb) and file =~ RB_REGEXP) or (filetypes.include?(:erb) and file =~ ERB_REGEXP) or (filetypes.include?(:js) and file =~ JS_REGEXP)
           end
           yield file if File.readable?(file)
         end
+      else
+        debug("Cannot continue")
       end
     end
 
@@ -139,6 +158,10 @@ module GitHooksHelper
 
     def warn(text)
       puts(text.red)
+    end
+
+    def debug(msg)
+      puts msg if @debug
     end
 
   end
