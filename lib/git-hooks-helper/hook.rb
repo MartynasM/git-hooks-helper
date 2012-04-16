@@ -7,21 +7,28 @@ require "open3"
 module GitHooksHelper
   class Hook
 
-    RB_REGEXP     = /\.(rb|rake|task|prawn)\z/
-    ERB_REGEXP   = /\.erb\z/
-    JS_REGEXP   = /\.js\z/
+    FILETYPES = {
+      rb:     RB_REGEXP,
+      erb:    ERB_REGEXP,
+      js:     JS_REGEXP,
+      haml:   HAML_REGEXP,
+      coffee: COFFEE_REGEXP
+    }
 
     RB_WARNING_REGEXP  = /[0-9]+:\s+warning:/
+    HAML_INVALID_REGEXP = /error/
     ERB_INVALID_REGEXP = /invalid\z/
     COLOR_REGEXP = /\e\[(\d+)m/
 
     # Set this to true if you want warnings to stop your commit
     def initialize(&block)
       @ruby = GitHooksHelper::Ruby.new
+      @debug = false
 
       @result = GitHooksHelper::Result.new(false)
-      @changed_ruby_files = GitHooksHelper::Git.in_index
-
+      @changed_files = GitHooksHelper::Git.in_index
+      debug("changed files")
+      debug @changed_files
       instance_eval(&block) if block
 
       if @result.errors?
@@ -55,6 +62,14 @@ module GitHooksHelper
       end
     end
 
+    def start_debug
+      @debug = true
+    end
+
+    def stop_debug
+      @debug = false
+    end
+
     def stop_on_warnings
       @result.stop_on_warnings = true
     end
@@ -68,20 +83,32 @@ module GitHooksHelper
     end
 
     def list_files(filetypes = [:all])
+      puts "--- Listing files of type: #{filetypes}"
       each_changed_file(filetypes) do |file|
         puts file
       end
+      puts "--- End of list"
     end
 
     def each_changed_file(filetypes = [:all])
+      filetypes = [filetypes] unless filetypes.class == Array
       if @result.continue?
-        @changed_ruby_files.each do |file|
-          unless filetypes.include?(:all)
-            next unless (filetypes.include?(:rb) and file =~ RB_REGEXP) or (filetypes.include?(:erb) and file =~ ERB_REGEXP) or (filetypes.include?(:js) and file =~ JS_REGEXP)
-          end
+        debug("Can continue")
+        @changed_files.each do |file|
+          next unless file_matches_filetypes?(file, filetypes)
           yield file if File.readable?(file)
         end
+      else
+        debug("Cannot continue")
       end
+    end
+
+    def file_matches_filetypes?(file, filetypes)
+      return true if filetypes.include?(:all)
+      filetypes.each do |type|
+        return true if file =~ FILETYPES[type]
+      end
+      return false
     end
 
     def check_ruby_syntax
@@ -102,8 +129,16 @@ module GitHooksHelper
       end
     end
 
+    def check_haml
+      each_changed_file([:haml]) do |file|
+        popen3("haml --check #{file}") do |stdin, stdout, stderr|
+          @result.errors.concat stderr.read.split("\n").map{|line| "#{file} => invalid HAML syntax\n#{line}" if line.gsub(COLOR_REGEXP, '') =~ HAML_INVALID_REGEXP}.compact
+        end
+      end
+    end
+
     def check_best_practices
-      each_changed_file([:rb, :erb]) do |file|
+      each_changed_file([:rb, :erb, :haml]) do |file|
         Open3.popen3("rails_best_practices --spec --test #{file}") do |stdin, stdout, stderr|
           @result.warn(stdout.read.split("\n").map do |line|
             if line =~ /#{file}/
@@ -139,6 +174,10 @@ module GitHooksHelper
 
     def warn(text)
       puts(text.red)
+    end
+
+    def debug(msg)
+      puts msg if @debug
     end
 
   end

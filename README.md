@@ -38,7 +38,7 @@ and paste following code:
     # never_stop                                         # hooks never fails commits
     # list_files                                         # shows list of all changed files
 
-    # schecks
+    # checks
     check_ruby_syntax                                    # errors when ruby syntax has errors
     check_erb                                            # errors when ERB syntax has errors
     check_best_practices                                 # warnings when ruby best practices are violated
@@ -46,6 +46,8 @@ and paste following code:
     warning_on "console.log", "debugger", {:in => [:js]} # warning when any of these texts are present in JS files
 
     # messages
-    info "Run rspec tests and have a nice day."
+    info   "Run rspec tests and have a nice day."        # Green text
+    notice "Or bad things will happen"                   # Yellow text
+    warn   "Cthulhu"                                     # Red text
   end
 ```

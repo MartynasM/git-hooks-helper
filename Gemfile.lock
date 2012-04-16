@@ -1,30 +1,13 @@
 PATH
   remote: .
   specs:
-    git-hooks-helper (0.0.1)
-      rails-erb-check
-      rails_best_practices
+    git-hooks-helper (0.0.2)
 
 GEM
   remote: http://rubygems.org/
   specs:
     abstract (1.0.0)
-    actionpack (3.0.11)
-      activemodel (= 3.0.11)
-      activesupport (= 3.0.11)
-      builder (~> 2.1.2)
-      erubis (~> 2.6.6)
-      i18n (~> 0.5.0)
-      rack (~> 1.2.1)
-      rack-mount (~> 0.6.14)
-      rack-test (~> 0.5.7)
-      tzinfo (~> 0.3.23)
-    activemodel (3.0.11)
-      activesupport (= 3.0.11)
-      builder (~> 2.1.2)
-      i18n (~> 0.5.0)
     activesupport (3.0.11)
-    builder (2.1.2)
     coderay (0.9.8)
     colored (1.2)
     diff-lcs (1.1.3)
@@ -39,13 +22,6 @@ GEM
       method_source (~> 0.6.7)
       ruby_parser (>= 2.3.1)
       slop (~> 2.1.0)
-    rack (1.2.4)
-    rack-mount (0.6.14)
-      rack (>= 1.0.0)
-    rack-test (0.5.7)
-      rack (>= 1.0)
-    rails-erb-check (0.1.0)
-      actionpack (~> 3.0)
     rails_best_practices (1.3.0)
       activesupport
       colored
@@ -65,7 +41,6 @@ GEM
       sexp_processor (~> 3.0)
     sexp_processor (3.0.10)
     slop (2.1.0)
-    tzinfo (0.3.31)
 
 PLATFORMS
   ruby

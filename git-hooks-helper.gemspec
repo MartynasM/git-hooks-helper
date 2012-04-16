@@ -6,8 +6,8 @@ Gem::Specification.new do |s|
   s.name        = "git-hooks-helper"
   s.version     = GitHooksHelper::VERSION
   s.authors     = ["Martynas Margis"]
-  s.email       = []
-  s.homepage    = ""
+  s.email       = ["no@email.com"]
+  s.homepage    = "https://github.com/BuGo/git-hooks-helper"
   s.summary     = %q{Small gem to help write simple git hooks}
   s.description = %q{Gem for creating simple git hooks in ruby.}
 
@@ -18,6 +18,5 @@ Gem::Specification.new do |s|
 #  s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  s.add_runtime_dependency "rails-erb-check"
-  s.add_runtime_dependency "rails_best_practices"
+  # s.add_runtime_dependency "open3"
 end
