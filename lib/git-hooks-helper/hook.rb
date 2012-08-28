@@ -139,7 +139,7 @@ module GitHooksHelper
 
     def check_best_practices
       each_changed_file([:rb, :erb, :haml]) do |file|
-        Open3.popen3("rails_best_practices --spec --test #{file}") do |stdin, stdout, stderr|
+        Open3.popen3("rails_best_practices --spec --test -o #{file}") do |stdin, stdout, stderr|
           @result.warn(stdout.read.split("\n").map do |line|
             if line =~ /#{file}/
               line.gsub(COLOR_REGEXP, '').strip
