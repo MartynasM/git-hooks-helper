@@ -1,11 +1,18 @@
-require "git-hooks-helper/result"
-require "git-hooks-helper/git"
-require "git-hooks-helper/ruby"
-require "git-hooks-helper/extensions/string"
-require "open3"
+require 'git-hooks-helper/result'
+require 'git-hooks-helper/git'
+require 'git-hooks-helper/ruby'
+require 'git-hooks-helper/extensions/string'
+require 'open3'
+require 'pry'
 
 module GitHooksHelper
   class Hook
+
+    RB_REGEXP = /\.(rb|rake|task|prawn)\z/
+    ERB_REGEXP  = /\.erb\z/
+    JS_REGEXP = /\.js\z/
+    HAML_REGEXP = /\.haml\z/
+    COFFEE_REGEXP = /\.coffee\z/
 
     FILETYPES = {
       rb:     RB_REGEXP,
@@ -124,15 +131,27 @@ module GitHooksHelper
     def check_erb
       each_changed_file([:erb]) do |file|
         Open3.popen3("rails-erb-check #{file}") do |stdin, stdout, stderr|
-          @result.errors.concat stdout.read.split("\n").map{|line| "#{file} => invalid ERB syntax" if line.gsub(COLOR_REGEXP, '') =~ ERB_INVALID_REGEXP}.compact
+          lines = stdout.read.split("\n")
+          errors = lines.map do |line| 
+            if line.gsub(COLOR_REGEXP, '') =~ ERB_INVALID_REGEXP
+              "#{file} => invalid ERB syntax" 
+            end
+          end.compact
+          @result.errors.concat errors
         end
       end
     end
 
     def check_haml
       each_changed_file([:haml]) do |file|
-        popen3("haml --check #{file}") do |stdin, stdout, stderr|
-          @result.errors.concat stderr.read.split("\n").map{|line| "#{file} => invalid HAML syntax\n#{line}" if line.gsub(COLOR_REGEXP, '') =~ HAML_INVALID_REGEXP}.compact
+        Open3.popen3("haml --check #{file}") do |stdin, stdout, stderr|
+          lines = stderr.read.split("\n")
+          errors = lines.map do |line| 
+            if line.gsub(COLOR_REGEXP, '') =~ HAML_INVALID_REGEXP
+              "#{file} => invalid HAML syntax\n  #{line}" 
+            end
+          end.compact
+          @result.errors.concat errors
         end
       end
     end

@@ -89,7 +89,6 @@ describe GitHooksHelper do
       GitHooksHelper::Git.should_receive(:in_index).and_return(["spec/git_files/syntax_error.html.erb"])
       begin
         GitHooksHelper.results do
-          stop_on_warnings
           check_erb
         end
       rescue SystemExit => e

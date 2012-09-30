@@ -1,2 +1,4 @@
 1. 
 1. Add project to TravisCI
+2. Validate SLIM templates
+3. Add options to ignore text in comments.

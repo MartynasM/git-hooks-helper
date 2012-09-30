@@ -9,9 +9,7 @@ Gem::Specification.new do |s|
   s.email       = ["no@email.com"]
   s.homepage    = "https://github.com/BuGo/git-hooks-helper"
   s.summary     = %q{Small gem to help write simple git hooks}
-  s.description = %q{Gem for creating simple git hooks in ruby.}
-
-  s.rubyforge_project = "git-hooks-helper"
+  s.description = %q{Gem for creating simple pre-commit git hooks in ruby.}
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")

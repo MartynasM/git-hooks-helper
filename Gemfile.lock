@@ -6,47 +6,78 @@ PATH
 GEM
   remote: http://rubygems.org/
   specs:
-    abstract (1.0.0)
-    activesupport (3.0.11)
+    actionpack (3.2.8)
+      activemodel (= 3.2.8)
+      activesupport (= 3.2.8)
+      builder (~> 3.0.0)
+      erubis (~> 2.7.0)
+      journey (~> 1.0.4)
+      rack (~> 1.4.0)
+      rack-cache (~> 1.2)
+      rack-test (~> 0.6.1)
+      sprockets (~> 2.1.3)
+    activemodel (3.2.8)
+      activesupport (= 3.2.8)
+      builder (~> 3.0.0)
+    activesupport (3.2.8)
+      i18n (~> 0.6)
+      multi_json (~> 1.0)
+    builder (3.0.0)
     coderay (0.9.8)
     colored (1.2)
     diff-lcs (1.1.3)
-    erubis (2.6.6)
-      abstract (>= 1.0.0)
-    i18n (0.5.0)
+    erubis (2.7.0)
+    hike (1.2.1)
+    i18n (0.6.0)
+    journey (1.0.4)
     method_source (0.6.7)
       ruby_parser (>= 2.3.1)
-    progressbar (0.9.1)
+    multi_json (1.3.6)
+    progressbar (0.9.2)
     pry (0.9.7.4)
       coderay (~> 0.9.8)
       method_source (~> 0.6.7)
       ruby_parser (>= 2.3.1)
       slop (~> 2.1.0)
-    rails_best_practices (1.3.0)
+    rack (1.4.1)
+    rack-cache (1.2)
+      rack (>= 0.4)
+    rack-test (0.6.1)
+      rack (>= 1.0)
+    rails-erb-check (0.1.0)
+      actionpack (~> 3.0)
+    rails_best_practices (1.7.2)
       activesupport
       colored
       erubis
       i18n
       progressbar
       sexp_processor
-    rspec (2.8.0)
-      rspec-core (~> 2.8.0)
-      rspec-expectations (~> 2.8.0)
-      rspec-mocks (~> 2.8.0)
-    rspec-core (2.8.0)
-    rspec-expectations (2.8.0)
+    rspec (2.6.0)
+      rspec-core (~> 2.6.0)
+      rspec-expectations (~> 2.6.0)
+      rspec-mocks (~> 2.6.0)
+    rspec-core (2.6.4)
+    rspec-expectations (2.6.0)
       diff-lcs (~> 1.1.2)
-    rspec-mocks (2.8.0)
+    rspec-mocks (2.6.0)
     ruby_parser (2.3.1)
       sexp_processor (~> 3.0)
-    sexp_processor (3.0.10)
+    sexp_processor (3.0.9)
     slop (2.1.0)
+    sprockets (2.1.3)
+      hike (~> 1.2)
+      rack (~> 1.0)
+      tilt (~> 1.1, != 1.3.0)
+    tilt (1.3.3)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   git-hooks-helper!
-  pry
-  rails_best_practices
-  rspec
+  pry (= 0.9.7.4)
+  rails-erb-check (= 0.1.0)
+  rails_best_practices (= 1.7.2)
+  rspec (= 2.6.0)
+  sexp_processor (= 3.0.9)
