@@ -2,15 +2,26 @@ Instalation
 -----------
   gem install git-hooks-helper
 
+Dependencies
+------------
+This gem has will have no dependencies and it will be up to you to provide required and possible dependencies.
+Possible dependencies are tied to checks you want to use:
+ * check_erb - rails-erb-check
+ * check_slim - slim
+ * check_haml - haml
+ * check_best_practices - rails_best_practices
+
+
 File clasification
 ------------------
 
 Most commands use file classes internally or accept type class as a param.
 File type classes and associated file extensions:
 
-1. :rb  - .rb .rake .task .prawn
-2. :js  - .js
-3. :erb - .erb
+1. :rb  -  .rb .rake .task .prawn
+2. :js  -  .js
+3. :erb -  .erb
+3. :slim - .slim
 
 Usage
 -----
@@ -39,8 +50,10 @@ and paste following code:
     # list_files                                         # shows list of all changed files
 
     # checks
-    check_ruby_syntax                                    # errors when ruby syntax has errors
-    check_erb                                            # errors when ERB syntax has errors
+    check_ruby_syntax                                    # errors when ruby syntax is invalid
+    check_erb                                            # errors when ERB syntax is invalid
+    check_slim                                           # errors when SLIM syntax is invalid
+    check_haml                                           # errors when HAML syntax is invalid
     check_best_practices                                 # warnings when ruby best practices are violated
     warning_on "WTF?", "binding.pry", "<<<<<<<"          # warnings when any of these texts are present in any commited files
     warning_on "console.log", "debugger", {:in => [:js]} # warning when any of these texts are present in JS files

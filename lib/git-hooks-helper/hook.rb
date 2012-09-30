@@ -8,7 +8,7 @@ require 'pry'
 module GitHooksHelper
   class Hook
 
-    RB_REGEXP = /\.(rb|rake|task|prawn|[Rr]akefile)\z/
+    RB_REGEXP = /\.(rb|rake|task|prawn|[Rr]akefile|task)\z/
     ERB_REGEXP  = /\.erb\z/
     JS_REGEXP = /\.js\z/
     HAML_REGEXP = /\.haml\z/

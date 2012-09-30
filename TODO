@@ -1,4 +1,6 @@
-1. 
 1. Add project to TravisCI
-2. Validate SLIM templates
+2. Check how git-hooks-helper works in completely bundled environment.
 3. Add options to ignore text in comments.
+
+ALIEN TECHNOLOGY
+4. Add possibility to check for custom code standart. 
