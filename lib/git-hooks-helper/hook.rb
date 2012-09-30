@@ -8,23 +8,26 @@ require 'pry'
 module GitHooksHelper
   class Hook
 
-    RB_REGEXP = /\.(rb|rake|task|prawn)\z/
+    RB_REGEXP = /\.(rb|rake|task|prawn|[Rr]akefile)\z/
     ERB_REGEXP  = /\.erb\z/
     JS_REGEXP = /\.js\z/
     HAML_REGEXP = /\.haml\z/
     COFFEE_REGEXP = /\.coffee\z/
+    SLIM_REGEXP = /\.slim\z/
 
     FILETYPES = {
       rb:     RB_REGEXP,
       erb:    ERB_REGEXP,
       js:     JS_REGEXP,
       haml:   HAML_REGEXP,
-      coffee: COFFEE_REGEXP
+      coffee: COFFEE_REGEXP,
+      slim:   SLIM_REGEXP
     }
 
     RB_WARNING_REGEXP  = /[0-9]+:\s+warning:/
     HAML_INVALID_REGEXP = /error/
     ERB_INVALID_REGEXP = /invalid\z/
+    SLIM_INVALID_REGEXP = /invalid1\z/
     COLOR_REGEXP = /\e\[(\d+)m/
 
     # Set this to true if you want warnings to stop your commit
@@ -142,6 +145,19 @@ module GitHooksHelper
       end
     end
 
+
+    def check_slim
+      each_changed_file([:slim]) do |file|
+        Open3.popen3("slimrb -c #{file}") do |stdin, stdout, stderr|
+          lines = stderr.read.split("\n")
+          errors = if lines.size > 0
+            # skip last 2 lines from output. There is only trace info.
+            @result.errors << "#{file} => invalid SLIM syntax\n  " + lines[0..-3].join("\n  ")
+          end
+        end
+      end
+    end
+
     def check_haml
       each_changed_file([:haml]) do |file|
         Open3.popen3("haml --check #{file}") do |stdin, stdout, stderr|
@@ -158,7 +174,7 @@ module GitHooksHelper
 
     def check_best_practices
       each_changed_file([:rb, :erb, :haml]) do |file|
-        Open3.popen3("rails_best_practices --spec --test -o #{file}") do |stdin, stdout, stderr|
+        Open3.popen3("rails_best_practices --spec --test #{file}") do |stdin, stdout, stderr|
           @result.warn(stdout.read.split("\n").map do |line|
             if line =~ /#{file}/
               line.gsub(COLOR_REGEXP, '').strip

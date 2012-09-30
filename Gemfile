@@ -7,4 +7,5 @@ gem 'sexp_processor', '3.0.9'
 
 group :test do
   gem 'rails-erb-check', '0.1.0'
+  gem 'slim', '1.1.0'
 end

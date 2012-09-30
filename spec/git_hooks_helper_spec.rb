@@ -85,10 +85,11 @@ describe GitHooksHelper do
   end
 
   describe "check_erb" do
-    it "should stop even on warnings on syntax error in ERB" do
+    it "should stop on syntax error in ERB" do
       GitHooksHelper::Git.should_receive(:in_index).and_return(["spec/git_files/syntax_error.html.erb"])
       begin
         GitHooksHelper.results do
+          stop_on_warnings
           check_erb
         end
       rescue SystemExit => e
@@ -107,6 +108,34 @@ describe GitHooksHelper do
         $!.status.should eql 0
       end
     end
+  end
+
+  describe 'check_slim' do
+
+    it 'should stop on error in SLIM template' do
+      GitHooksHelper::Git.should_receive(:in_index).and_return(["spec/git_files/syntax_error.html.slim"])
+      begin
+        GitHooksHelper.results do
+          stop_on_warnings
+          check_slim
+        end
+      rescue SystemExit => e
+        $!.status.should eql 1
+      end
+    end
+
+    it 'should show to error in correct SLIM template' do
+      GitHooksHelper::Git.should_receive(:in_index).and_return(["spec/git_files/ok.html.slim"])
+      begin
+        GitHooksHelper.results do
+          stop_on_warnings
+          check_slim
+        end
+      rescue SystemExit => e
+        $!.status.should eql 0
+      end
+    end
+
   end
 
   describe "warning_on" do
