@@ -101,24 +101,26 @@ module GitHooksHelper
     end
 
     def each_changed_file(filetypes = [:all])
-      filetypes = [filetypes] unless filetypes.class == Array
+      filetypes = Array(filetypes)
       if @result.continue?
         debug("Can continue")
-        @changed_files.each do |file|
-          next unless file_matches_filetypes?(file, filetypes)
-          yield file if File.readable?(file)
+        changed_files(filetypes).each do |file|
+          yield file
         end
       else
         debug("Cannot continue")
       end
     end
 
+    def changed_files(filetypes = [:all])
+      filetypes = Array(filetypes)
+       @changed_files.select{ |file| file_matches_filetypes?(file, filetypes) and File.readable?(file) }
+    end
+
     def file_matches_filetypes?(file, filetypes)
-      return true if filetypes.include?(:all)
-      filetypes.each do |type|
-        return true if file =~ FILETYPES[type]
+      filetypes.any? do |type|
+        file =~ FILETYPES[type] || type == :all
       end
-      return false
     end
 
     def check_ruby_syntax
@@ -135,16 +137,15 @@ module GitHooksHelper
       each_changed_file([:erb]) do |file|
         Open3.popen3("rails-erb-check #{file}") do |stdin, stdout, stderr|
           lines = stdout.read.split("\n")
-          errors = lines.map do |line| 
+          errors = lines.map do |line|
             if line.gsub(COLOR_REGEXP, '') =~ ERB_INVALID_REGEXP
-              "#{file} => invalid ERB syntax" 
+              "#{file} => invalid ERB syntax"
             end
           end.compact
           @result.errors.concat errors
         end
       end
     end
-
 
     def check_slim
       each_changed_file([:slim]) do |file|
@@ -162,9 +163,9 @@ module GitHooksHelper
       each_changed_file([:haml]) do |file|
         Open3.popen3("haml --check #{file}") do |stdin, stdout, stderr|
           lines = stderr.read.split("\n")
-          errors = lines.map do |line| 
+          errors = lines.map do |line|
             if line.gsub(COLOR_REGEXP, '') =~ HAML_INVALID_REGEXP
-              "#{file} => invalid HAML syntax\n  #{line}" 
+              "#{file} => invalid HAML syntax\n  #{line}"
             end
           end.compact
           @result.errors.concat errors
@@ -180,6 +181,25 @@ module GitHooksHelper
               line.gsub(COLOR_REGEXP, '').strip
             end
           end.compact)
+        end
+      end
+    end
+
+    def flog_methods(threshold = 20)
+      files = changed_files(:rb).join(' ')
+      Open3.popen3("flog -m #{files}") do |stdin, stdout, stderr|
+        punishment = stdout.read.split("\n")[3..-1]
+        punishment.each do |line|
+          line   = line.split(" ")
+          score  = line[0].to_f
+          method = line[1].strip
+          path   = line[2].strip
+          if score >= threshold
+            puts "Flog for #{method} in #{path} returned #{score}"
+            @result.errors << "Flog for #{method} in #{path} returned #{score}"
+          else
+            break
+          end
         end
       end
     end
