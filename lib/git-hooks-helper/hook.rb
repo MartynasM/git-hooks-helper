@@ -174,6 +174,9 @@ module GitHooksHelper
     end
 
     def check_best_practices
+      Open3.popen3("pwd") do |stdin, stdout, stderr|
+        puts stdout.read
+      end
       each_changed_file([:rb, :erb, :haml]) do |file|
         Open3.popen3("rails_best_practices --spec --test #{file}") do |stdin, stdout, stderr|
           @result.warn(stdout.read.split("\n").map do |line|
@@ -187,18 +190,19 @@ module GitHooksHelper
 
     def flog_methods(threshold = 20)
       files = changed_files(:rb).join(' ')
-      Open3.popen3("flog -m #{files}") do |stdin, stdout, stderr|
-        punishment = stdout.read.split("\n")[3..-1]
-        punishment.each do |line|
-          line   = line.split(" ")
-          score  = line[0].to_f
-          method = line[1].strip
-          path   = line[2].strip
-          if score >= threshold
-            puts "Flog for #{method} in #{path} returned #{score}"
-            @result.errors << "Flog for #{method} in #{path} returned #{score}"
-          else
-            break
+      if files != ''
+        Open3.popen3("flog -m #{files}") do |stdin, stdout, stderr|
+          punishment = stdout.read.split("\n")[3..-1]
+          punishment.each do |line|
+            line   = line.split(" ")
+            score  = line[0].to_f
+            method = line[1].strip
+            path   = line[2].strip
+            if score >= threshold
+              @result.warn("Flog for #{method} in #{path} returned #{score}")
+            else
+              break
+            end
           end
         end
       end
