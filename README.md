@@ -53,6 +53,7 @@ and paste following code:
     check_erb                                            # errors when ERB syntax is invalid
     check_slim                                           # errors when SLIM syntax is invalid
     check_haml                                           # errors when HAML syntax is invalid
+    flog_methods 20                                      # warnings when FLOG reports more than 20 on method
     check_best_practices                                 # warnings when ruby best practices are violated
     warning_on "WTF?", "binding.pry", "<<<<<<<"          # warnings when any of these texts are present in any commited files
     warning_on "console.log", "debugger", {:in => [:js]} # warning when any of these texts are present in JS files
