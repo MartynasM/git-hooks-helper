@@ -4,13 +4,12 @@ Instalation
 
 Dependencies
 ------------
-This gem has will have no dependencies and it will be up to you to provide required and possible dependencies.
+This gem has no dependencies and it will be up to you to provide required and possible dependencies.
 Possible dependencies are tied to checks you want to use:
- * check_erb - rails-erb-check
- * check_slim - slim
- * check_haml - haml
- * check_best_practices - rails_best_practices
-
+ * check_erb - gem install rails-erb-check
+ * check_slim - gem install slim
+ * check_haml - gem install haml
+ * check_best_practices - gem install rails_best_practices
 
 File clasification
 ------------------
@@ -18,9 +17,9 @@ File clasification
 Most commands use file classes internally or accept type class as a param.
 File type classes and associated file extensions:
 
-1. :rb  -  .rb .rake .task .prawn
-2. :js  -  .js
-3. :erb -  .erb
+1. :rb   - .rb .rake .task .prawn
+2. :js   - .js
+3. :erb  - .erb
 3. :slim - .slim
 
 Usage
@@ -29,12 +28,12 @@ Create your hit hook in .git/hooks directory and make it executable.
 
 My example pre-commit hook that i use myself.
 To create such a hook type in console:
-
+```
   cd your/project/
   touch .git/hooks/pre-commit
   chmod +x .git/hooks/pre-commit
   vim .git/hooks/pre-commit
-
+```
 and paste following code:
 
 
@@ -64,3 +63,7 @@ and paste following code:
     warn   "Cthulhu"                                     # Red text
   end
 ```
+
+Badges
+------
+[![Code Climate](https://codeclimate.com/github/MartynasM/git-hooks-helper.png)](https://codeclimate.com/github/MartynasM/git-hooks-helper)

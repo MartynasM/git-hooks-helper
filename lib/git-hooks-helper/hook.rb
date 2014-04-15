@@ -8,12 +8,12 @@ require 'pry'
 module GitHooksHelper
   class Hook
 
-    RB_REGEXP = /\.(rb|rake|task|prawn|[Rr]akefile|task)\z/
-    ERB_REGEXP  = /\.erb\z/
-    JS_REGEXP = /\.js\z/
-    HAML_REGEXP = /\.haml\z/
-    COFFEE_REGEXP = /\.coffee\z/
-    SLIM_REGEXP = /\.slim\z/
+    RB_REGEXP = /\.(rb|rake|task|prawn|[Rr]akefile|task)\z/.freeze
+    ERB_REGEXP  = /\.erb\z/.freeze
+    JS_REGEXP = /\.js\z/.freeze
+    HAML_REGEXP = /\.haml\z/.freeze
+    COFFEE_REGEXP = /\.coffee\z/.freeze
+    SLIM_REGEXP = /\.slim\z/.freeze
 
     FILETYPES = {
       rb:     RB_REGEXP,
@@ -22,13 +22,13 @@ module GitHooksHelper
       haml:   HAML_REGEXP,
       coffee: COFFEE_REGEXP,
       slim:   SLIM_REGEXP
-    }
+    }.freeze
 
-    RB_WARNING_REGEXP  = /[0-9]+:\s+warning:/
-    HAML_INVALID_REGEXP = /error/
-    ERB_INVALID_REGEXP = /invalid\z/
-    SLIM_INVALID_REGEXP = /invalid1\z/
-    COLOR_REGEXP = /\e\[(\d+)m/
+    RB_WARNING_REGEXP  = /[0-9]+:\s+warning:/.freeze
+    HAML_INVALID_REGEXP = /error/.freeze
+    ERB_INVALID_REGEXP = /invalid\z/.freeze
+    SLIM_INVALID_REGEXP = /invalid1\z/.freeze
+    COLOR_REGEXP = /\e\[(\d+)m/.freeze
 
     # Set this to true if you want warnings to stop your commit
     def initialize(&block)
