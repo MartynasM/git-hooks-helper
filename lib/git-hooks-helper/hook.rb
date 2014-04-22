@@ -27,7 +27,7 @@ module GitHooksHelper
     RB_WARNING_REGEXP  = /[0-9]+:\s+warning:/.freeze
     HAML_INVALID_REGEXP = /error/.freeze
     ERB_INVALID_REGEXP = /invalid\z/.freeze
-    SLIM_INVALID_REGEXP = /invalid1\z/.freeze
+    SLIM_INVALID_REGEXP = /Slim::Parser/.freeze
     COLOR_REGEXP = /\e\[(\d+)m/.freeze
 
     # Set this to true if you want warnings to stop your commit
@@ -151,7 +151,10 @@ module GitHooksHelper
       each_changed_file([:slim]) do |file|
         Open3.popen3("slimrb -c #{file}") do |stdin, stdout, stderr|
           lines = stderr.read.split("\n")
-          errors = if lines.size > 0
+          # HELP NEEDED HERE.
+          # Somewhy this appears in stderr when runnin in read world:
+          # 'fatal: Not a git repository: '.git''
+          errors = if lines.size > 0 && lines.any?{|line| line =~ SLIM_INVALID_REGEXP}
             # skip last 2 lines from output. There is only trace info.
             @result.errors << "#{file} => invalid SLIM syntax\n  " + lines[0..-3].join("\n  ")
           end
